@@ -13,7 +13,7 @@ var Ruler  = require('./ruler');
 var _rules = [
   [ 'normalize',      require('./rules_core/normalize')      ],
   [ 'block',          require('./rules_core/block')          ],
-  // [ 'inline',         require('./rules_core/inline')         ],
+  [ 'inline',         require('./rules_core/inline')         ],
   // [ 'linkify',        require('./rules_core/linkify')        ],
   // [ 'replacements',   require('./rules_core/replacements')   ],
   // [ 'smartquotes',    require('./rules_core/smartquotes')    ]

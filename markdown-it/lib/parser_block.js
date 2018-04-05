@@ -12,17 +12,17 @@ var Ruler           = require('./ruler');
 var _rules = [
   // First 2 params - rule name & source. Secondary array - list of rules,
   // which can be terminated by this one.
-  // [ 'table',      require('./rules_block/table'),      [ 'paragraph', 'reference' ] ],
-  // [ 'code',       require('./rules_block/code') ],
-  // [ 'fence',      require('./rules_block/fence'),      [ 'paragraph', 'reference', 'blockquote', 'list' ] ],
-  // [ 'blockquote', require('./rules_block/blockquote'), [ 'paragraph', 'reference', 'blockquote', 'list' ] ],
-  // [ 'hr',         require('./rules_block/hr'),         [ 'paragraph', 'reference', 'blockquote', 'list' ] ],
-  // [ 'list',       require('./rules_block/list'),       [ 'paragraph', 'reference', 'blockquote' ] ],
-  // [ 'reference',  require('./rules_block/reference') ],
-  // [ 'heading',    require('./rules_block/heading'),    [ 'paragraph', 'reference', 'blockquote' ] ],
-  // [ 'lheading',   require('./rules_block/lheading') ],
-  // [ 'html_block', require('./rules_block/html_block'), [ 'paragraph', 'reference', 'blockquote' ] ],
-  // [ 'paragraph',  require('./rules_block/paragraph') ]
+  [ 'table',      require('./rules_block/table'),      [ 'paragraph', 'reference' ] ],
+  [ 'code',       require('./rules_block/code') ],
+  [ 'fence',      require('./rules_block/fence'),      [ 'paragraph', 'reference', 'blockquote', 'list' ] ],
+  [ 'blockquote', require('./rules_block/blockquote'), [ 'paragraph', 'reference', 'blockquote', 'list' ] ],
+  [ 'hr',         require('./rules_block/hr'),         [ 'paragraph', 'reference', 'blockquote', 'list' ] ],
+  [ 'list',       require('./rules_block/list'),       [ 'paragraph', 'reference', 'blockquote' ] ],
+  [ 'reference',  require('./rules_block/reference') ],
+  [ 'heading',    require('./rules_block/heading'),    [ 'paragraph', 'reference', 'blockquote' ] ],
+  [ 'lheading',   require('./rules_block/lheading') ],
+  [ 'html_block', require('./rules_block/html_block'), [ 'paragraph', 'reference', 'blockquote' ] ],
+  [ 'paragraph',  require('./rules_block/paragraph') ]
 ];
 
 
