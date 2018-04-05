@@ -1,7 +1,7 @@
 var md = require('./markdown-it')();
 var _ = require('lodash');
 
-// 找出以 :fang 开头， 以 fang: 结尾的，将 fang 替换为 yun, 中间按照原字符串显示
+// 找出以 :fang 开头， 以 fang: 结尾的，将 fang 替换为 yun，中间按照 markdown 显示
 function my_block(state, startLine, endLine, silent) {
     let pos = state.bMarks[startLine] + state.tShift[startLine];
     let max = state.eMarks[startLine];
@@ -37,15 +37,19 @@ function my_block(state, startLine, endLine, silent) {
     state.line = line;
 
     if (foundTail) {
-        const token = state.push('fang_block', 'yun', 0);
-        token.block = true;
-        token.content = firstLine.trim();
-        if (lastLine !== undefined) {
-            token.content += '\n' + state.getLines(startLine + 1, line - 1, state.tShift[startLine], true);
-            token.content += lastLine.trim();
-        }
+        const headToken = state.push('fang_open', 'yun', 1);
+        headToken.map = [ startLine, state.line ];
 
-        token.map = [ startLine, state.line ];
+        const lineToken = state.push('inline', '', 0);
+        lineToken.content = firstLine.trim();
+        if (lastLine !== undefined) {
+            lineToken.content += '\n' + state.getLines(startLine + 1, line - 1, state.tShift[startLine], true);
+            lineToken.content += lastLine.trim();
+        }
+        lineToken.map  = [ startLine, state.line ];
+        lineToken.children = [];
+
+        const tailToken = state.push('fang_close', 'yun', -1);
 
         // console.log(token);
         return true;
@@ -53,14 +57,20 @@ function my_block(state, startLine, endLine, silent) {
     return false;
 }
 
-function fang_block(tokens, idx) {
+function fang_block_head(tokens, idx) {
     const { content, tag } = tokens[idx];
-    return `<${tag}>${content}</${tag}>`;
+    return `<${tag} `;
+}
+
+function fang_block_tail(tokens, idx) {
+    const { content, tag } = tokens[idx];
+    return ` />`;
 }
 
 function my_plugin(md, options) {
     md.block.ruler.before('table', 'my_block', my_block);
-    md.renderer.rules.fang_block = fang_block;
+    md.renderer.rules.fang_block_head = fang_block_head;
+    md.renderer.rules.fang_block_tail = fang_block_tail;
 }
 
 md.use(my_plugin);
@@ -77,5 +87,5 @@ var str1 = `
 hehe fang:
 `;
 
-var result = md.render(str1);
+var result = md.render(str);
 console.log('\nresult=', result);
