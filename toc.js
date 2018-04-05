@@ -1,7 +1,7 @@
 var md = require('./markdown-it')({breaks: true});
 var head = require('./head');
 
-md.use(head);
+md.use(head, {autoNumber: false});
 
 var str = `
 [TOC]

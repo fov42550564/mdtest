@@ -11,7 +11,7 @@ function getSerial(serialPool, level) {
             break;
         }
     }
-    return list.join('.');
+    return list;
 }
 
 function toSlug(string) {
@@ -31,7 +31,7 @@ function toSlug(string) {
     return slug;
 };
 
-module.exports = function(md) {
+module.exports = function(md, options) {
     let gstate;
     function toc(state, silent) {
         while (state.src.indexOf('\n') >= 0 && state.src.indexOf('\n') < state.src.indexOf('[toc]')) {
@@ -88,7 +88,7 @@ module.exports = function(md) {
             <h${level}>
             <a class="anchor" aria-hidden="true" id="${head_id}"></a>
             <a href="#${toc_id}" aria-hidden="true" class="hash-link" >${ANCHOR_SVG}</a>
-            <span style="margin-right: 10px;">${serial}</span>
+            ${options.autoNumber ? `<span style="margin-right: 10px;">${serial}</span>` : ''}
             `
         );
     };
@@ -121,7 +121,7 @@ module.exports = function(md) {
                     indent--;
                 }
             }
-            res.push(`<li><a class="anchor" aria-hidden="true" href="#${head_id}" id="${toc_id}"><span style="margin-right: 6px;">${serial}</span>${title}</a></li>`);
+            res.push(`<li><a class="anchor" aria-hidden="true" href="#${head_id}" id="${toc_id}">${options.autoNumber ? `<span style="margin-right: 6px;">${serial}</span>` : ''}${title}</a></li>`);
             return res.join('');
         });
 
@@ -146,11 +146,13 @@ module.exports = function(md) {
                 serialPool[level]++;
             }
             lastLevel = level;
+            const serialList = getSerial(serialPool, level);
+            const serialId = serialList.join('_');
             token.toc = {
-                serial: getSerial(serialPool, level),
+                serial: serialList.join('.'),
                 title: toSlug(tokens[+i+1].content),
-                toc_id: `__toc_id_${token.map[0]}`,
-                head_id: `__head_id_${token.map[0]}`,
+                toc_id: `toc_id_${serialId}`,
+                head_id: `head_id_${serialId}`,
                 level,
             }
         }
