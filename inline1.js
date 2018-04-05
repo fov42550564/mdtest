@@ -21,7 +21,6 @@ function fang_inline(tokens, idx) {
 
 function my_plugin(md, options) {
     md.inline.ruler.before('text', 'my_inline', my_inline);
-    // md.inline.ruler.push('my_inline', my_inline);
     md.renderer.rules.fang_inline = fang_inline;
 }
 
