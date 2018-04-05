@@ -37,7 +37,7 @@ function my_block(state, startLine, endLine, silent) {
     state.line = line;
 
     if (foundTail) {
-        const headToken = state.push('fang_open', 'yun', 1);
+        const headToken = state.push('fang_head', 'yun', 1);
         headToken.map = [ startLine, state.line ];
 
         const lineToken = state.push('inline', '', 0);
@@ -49,7 +49,7 @@ function my_block(state, startLine, endLine, silent) {
         lineToken.map  = [ startLine, state.line ];
         lineToken.children = [];
 
-        const tailToken = state.push('fang_close', 'yun', -1);
+        const tailToken = state.push('fang_tail', 'yun', -1);
 
         // console.log(token);
         return true;
@@ -57,20 +57,20 @@ function my_block(state, startLine, endLine, silent) {
     return false;
 }
 
-function fang_block_head(tokens, idx) {
+function fang_head(tokens, idx) {
     const { content, tag } = tokens[idx];
-    return `<${tag} `;
+    return `<${tag}> `;
 }
 
-function fang_block_tail(tokens, idx) {
+function fang_tail(tokens, idx) {
     const { content, tag } = tokens[idx];
-    return ` />`;
+    return `<${tag}/>`;
 }
 
 function my_plugin(md, options) {
     md.block.ruler.before('table', 'my_block', my_block);
-    md.renderer.rules.fang_block_head = fang_block_head;
-    md.renderer.rules.fang_block_tail = fang_block_tail;
+    md.renderer.rules.fang_head = fang_head;
+    md.renderer.rules.fang_tail = fang_tail;
 }
 
 md.use(my_plugin);
