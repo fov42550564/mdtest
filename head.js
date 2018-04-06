@@ -1,6 +1,5 @@
 'use strict';
 
-const TOC_REGEXP = /^\[toc\]$/im;
 const ANCHOR_SVG = '<svg aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg>';
 
 function getSerial(serialPool, level) {
@@ -14,75 +13,43 @@ function getSerial(serialPool, level) {
     return list;
 }
 
-function toSlug(string) {
-    let slug = string
-    .toString()
-    .toLowerCase()
-    .replace(/\([^()]*\)$/, '')
-    .replace(/\[|\]|\(|\)/g, '')
-    .replace(/[^a-z0-9\u4e00-\u9fa5]/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
-
-    if (/\s[.]{1,}/.test(string)) {
-        slug += '-';
-    }
-
-    return slug;
-};
-
 module.exports = function(md, options) {
     let gstate;
-    function toc(state, silent) {
-        while (state.src.indexOf('\n') >= 0 && state.src.indexOf('\n') < state.src.indexOf('[toc]')) {
-            if (state.tokens.slice(-1)[0].type === 'softbreak') {
-                state.src = state.src.split('\n').slice(1).join('\n');
-                state.pos = 0;
-            }
-        }
-        var token;
+    let hasToc = false;
 
-        // trivial rejections
-        if (state.src.charCodeAt(state.pos) !== 0x5B /* [ */ ) {
+    function toc_block(state, startLine, endLine, silent) {
+        let pos = state.bMarks[startLine] + state.tShift[startLine];
+        let max = state.eMarks[startLine];
+        const text = state.src;
+
+        if (pos + 5 > max) {
+            return false;
+        }
+        if(text.slice(pos, pos + 5) !== '[TOC]') {
+            return false;
+        }
+        pos += 5;
+        const blkText = text.slice(pos, max);
+        if (blkText.trim()) {
             return false;
         }
 
-        var match = TOC_REGEXP.exec(state.src);
-        if (!match) {
-            return false;
-        }
-        match = match.filter(function(m) {
-            return m;
-        });
-        if (match.length < 1) {
-            return false;
-        }
-        if (silent) { // don't run any pairs in validation mode
-            return false;
-        }
+        state.line = startLine + 1;
 
-        token = state.push('toc_open', 'toc', 1);
-        token.markup = '[toc]';
-
-        token = state.push('toc_body', '', 0);
-        token.content = '';
-
-        token = state.push('toc_close', 'toc', -1);
-
-        var offset = 0;
-        var newline = state.src.indexOf('\n');
-        if (newline !== -1) {
-            offset = state.pos + newline;
+        let token;
+        if (options.ztree) {
+            token = state.push('toc_ztree_start', '', 0);
         } else {
-            offset = state.pos + state.posMax + 1;
+            token = state.push('toc_body', '', 0);
         }
-        state.pos = offset;
+        token.map = [ startLine, state.line ];
+
+        hasToc = true;
 
         return true;
     }
-
     md.renderer.rules.heading_open = function(tokens, idx) {
-        const { serial, toc_id, head_id, title, level } = tokens[idx].toc;
+        const { serial, toc_id, head_id, level } = tokens[idx].toc;
         return (
             `
             <h${level}>
@@ -93,25 +60,50 @@ module.exports = function(md, options) {
         );
     };
 
-    md.renderer.rules.toc_open = function(tokens, index) {
-        return '';
+    md.renderer.rules.toc_ztree_tail = function(tokens, index) {
+        return '</div></div>';
     };
-
-    md.renderer.rules.toc_close = function(tokens, index) {
-        return '';
+    md.renderer.rules.toc_ztree_start = function(tokens, index) {
+        const setting = {
+			view: {
+				dblClickExpand: false,
+				showLine: true,
+				showIcon: false,
+				selectedMulti: false,
+			},
+			data: {
+				simpleData: {
+					enable: true,
+					idKey : "id",
+					pIdKey: "pId",
+				},
+			},
+		};
+        return (
+            `<div style="display:flex;width: 100%;">
+                <div style="width:250px;"></div>
+            	<div style="float:left;width:250px;position:fixed;">
+                    <ul id="toc_root" class="ztree"><ul>
+                    <script>
+                        $(document).ready(function(){
+                			$.fn.zTree.init($("#toc_root"), ${JSON.stringify(setting)}, ${JSON.stringify(gstate.zNodes)});
+                		});
+                    </script>
+                </div>
+                <div style="flex:1;">`
+        );
     };
-
     md.renderer.rules.toc_body = function(tokens, index) {
         let indent = 0;
         const headings = gstate.tokens.filter(o => o.type === 'heading_open');
 
         const list = headings.map(o => {
-            const { serial, toc_id, head_id, title, level } = o.toc;
+            const { serial, toc_id, head_id, name, level } = o.toc;
             const res = [];
             if (level > indent) {
                 const ldiff = (level - indent);
                 for (let i = 0; i < ldiff; i++) {
-                    res.push('<ul class="table-of-contents">');
+                    res.push('<ul class="ztree">');
                     indent++;
                 }
             } else if (level < indent) {
@@ -121,7 +113,7 @@ module.exports = function(md, options) {
                     indent--;
                 }
             }
-            res.push(`<li><a class="anchor" aria-hidden="true" href="#${head_id}" id="${toc_id}">${options.autoNumber ? `<span style="margin-right: 6px;">${serial}</span>` : ''}${title}</a></li>`);
+            res.push(`<li><a class="anchor" aria-hidden="true" href="#${head_id}" id="${toc_id}">${options.autoNumber ? `<span style="margin-right: 6px;">${serial}</span>` : ''}${name}</a></li>`);
             return res.join('');
         });
 
@@ -133,6 +125,7 @@ module.exports = function(md, options) {
         const serialPool = {};
         const tokens = state.tokens;
         let lastLevel = 0;
+        const zNodes = [{ id: 'toc_id_0', name: "目录", open: true}];
 
         for (const i in tokens) {
             const token = tokens[i];
@@ -147,16 +140,34 @@ module.exports = function(md, options) {
             }
             lastLevel = level;
             const serialList = getSerial(serialPool, level);
+            const serial = serialList.join('.');
             const serialId = serialList.join('_');
+            const toc_id = `toc_id_${serialId}`;
+            const toc_parent_id = `toc_id_${serialList.slice(0, -1).join('.') || 0}`;
+            const head_id = `head_id_${serialId}`;
+            const name = tokens[+i+1].content;
             token.toc = {
-                serial: serialList.join('.'),
-                title: toSlug(tokens[+i+1].content),
-                toc_id: `toc_id_${serialId}`,
-                head_id: `head_id_${serialId}`,
+                serial,
+                name,
+                toc_id,
+                head_id,
                 level,
             }
+            options.ztree && zNodes.push({
+                id: toc_id,
+                pId: toc_parent_id,
+                name: (options.autoNumber ? serial + '    ' : '') + name,
+                open: true,
+                url: `#${head_id}`,
+                target:'_self'
+            });
         }
+        if (hasToc && options.ztree) {
+            tokens.push({type: 'toc_ztree_tail', tag: '',  nesting: 0});
+            state.zNodes = zNodes;
+        }
+
         gstate = state;
     });
-    md.inline.ruler.after('emphasis', 'toc', toc);
+    md.block.ruler.before('table', 'toc_block', toc_block);
 };
