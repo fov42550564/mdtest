@@ -4,113 +4,14 @@ var head = require('./head');
 md.use(head, {autoNumber: true, ztree: false});
 
 var str = `
-[TOC]
 
-# test
+[TOC] number  disable=1,2
 
-## something1
+# 安顺
 
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
+## test
 
-
-## something2
-
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-
-fangyunjiang<br />
-
-## something3
-
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-fangyunjiang<br />
-
-# test1
-
-## something1
+### something1
 
 fangyunjiang<br />
 fangyunjiang<br />
@@ -141,7 +42,7 @@ fangyunjiang<br />
 fangyunjiang<br />
 
 
-## something2
+### something2
 
 fangyunjiang<br />
 fangyunjiang<br />
@@ -179,7 +80,109 @@ fangyunjiang<br />
 
 fangyunjiang<br />
 
-## something3
+### something3
+
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+
+## test1
+
+### something1
+
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+
+
+### something2
+
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+fangyunjiang<br />
+
+fangyunjiang<br />
+
+### something3
 
 fangyunjiang<br />
 fangyunjiang<br />
